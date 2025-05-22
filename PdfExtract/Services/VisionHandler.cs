@@ -29,26 +29,29 @@ public sealed partial class VisionHandler : IVisionHandler
 
     private const string SystemTextPrompt =
         """
-        Agis en tant qu'assistant expert dans l’analyse de données textuelles extraites depuis une image.
-
+        Agis en tant qu’assistant expert en analyse de données textuelles extraites d’image.
+        
         Tu recevras une liste JSON au format suivant :
         [{"text":"text","color":"#FFBBAA"}]
-
-        Ton objectif est d’analyser ces textes pour identifier des informations pertinentes ou des motifs récurrents. 
-
-        Réalise une classification ou une catégorisation logique si applicable (ex : numéro de pièce, dimensions, annotations techniques, etc.). 
-        Si certains textes semblent ambigus ou incohérents, indique-les.
-        Si des textes sont en double, regroupes-les et indique-les.
-        Ta réponse devra être un SEUL et UNIQUE tableau JSON avec la structure suivante :
+        
+        Objectif :
+        Analyser les textes pour :
+        1. Identifier et regrouper les textes identiques (doublons).
+        2. Catégoriser chaque texte (ex. : numéro de pièce, dimension, annotation technique, commentaire, inconnu).
+        3. Détecter les textes ambigus, incohérents ou partiellement illisibles.
+        
+        Consignes de sortie :
+        Retourne un seul tableau JSON avec cette structure :
         [{"text":"...","color":"#FFBBAA","category":"...","note":"..."}]
-
-        - "text" : le texte d’origine
-        - "color" : la couleur du texte (ex : #FFBBAA)
-        - "category" : la catégorie identifiée (ex : dimension, nom de pièce, référence, commentaire, inconnu)
-        - "note" : optionnel, un commentaire ou une remarque utile (ex : "possiblement une cote", "illisible partiellement", etc.)
-
-        Si la liste fournie est vide, retourne simplement un tableau vide.
-        Assure-toi de ne renvoyer que le JSON, et uniquement le JSON.
+        - text : texte original
+        - color : couleur d’origine
+        - category : catégorie logique (ex : dimension, référence, nom de pièce, commentaire, inconnu)
+        - note : remarque utile (ex : "doublon regroupé", "illisible partiellement", etc.)
+        
+        Instructions supplémentaires :
+        - Regroupe les textes identiques en une seule entrée et ajoute "note": "doublon regroupé" ou équivalent.
+        - Si la liste d’entrée est vide, retourne simplement [].
+        - La réponse doit être strictement du JSON — pas de texte explicatif autour.
         """;
 
     public async IAsyncEnumerable<string> GetTextFromVisionAsync(FileInfo file)
@@ -88,7 +91,6 @@ public sealed partial class VisionHandler : IVisionHandler
             ResponseFormat = ChatResponseFormat.Text,
             MaxOutputTokens = 4096
         });
-        _logger.LogInformation(response.Text);
 
         var output = new List<Response>();
         var matches = ExtractJson().Matches(response.Text);

@@ -6,11 +6,6 @@ body {
     font-size: var(--type-ramp-base-font-size);
     line-height: var(--type-ramp-base-line-height);
     margin: 0;
-    padding: 0;
-    height: 100vh;
-    font-weight: var(--font-weight);
-    color:       var(--neutral-foreground-rest);
-    background:  var(--neutral-fill-layer-rest);
 }
 
 .navmenu-icon {
@@ -33,6 +28,10 @@ body {
     padding: 0.5rem 1.5rem;
     align-self: stretch !important;
     width: 100%;
+}
+
+.manage {
+    width: 100dvw;
 }
 
 footer {

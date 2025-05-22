@@ -1,0 +1,63 @@
+﻿@page "/"
+
+<PageTitle>Home</PageTitle>
+<FluentGrid>
+    <FluentGridItem xs="9">
+        <FluentInputFile Id="my-file-uploader"
+                         Mode="InputFileMode.SaveToTemporaryFolder"
+                         Multiple="false"
+                         MaximumFileSize="@(10 * 1024 * 1024)"
+                         Accept="application/pdf"
+                         @bind-ProgressPercent="@_progressPercent"
+                         OnCompleted="@OnCompletedAsync"
+                         Style="height: 400px;">
+            <ChildContent>
+                <label for="my-file-uploader">
+                    <FluentIcon Value="@(new @Icons.Regular.Size24.ArrowUpload())"/>
+                </label>
+
+                <div>
+                    Drag files here you wish to upload,
+                    or <label for="my-file-uploader">browse</label>
+                    for them<span style="color: red;">*</span>.
+                    <br/>
+                </div>
+            </ChildContent>
+        </FluentInputFile>
+    </FluentGridItem>
+    <FluentGridItem xs="3">
+        <FluentSlider Label="@Localizer["quality_selection"]" Orientation="Orientation.Horizontal" Min="10"
+                      Max="100" Step="10" @bind-Value="_quality" Style="margin-bottom: 1rem;">
+            <FluentSliderLabel Position="10">10%</FluentSliderLabel>
+            <FluentSliderLabel Position="50">50%</FluentSliderLabel>
+            <FluentSliderLabel Position="90">90%</FluentSliderLabel>
+            <FluentSliderLabel Position="100">100%</FluentSliderLabel>
+        </FluentSlider>
+        <FluentNumberField Label="@Localizer["chunk_size"]" @bind-Value="_chunkSize" Style="width: 100%;"/>
+        <FluentNumberField Label="@Localizer["chunk_overlap"]" @bind-Value="_chunkOverlap" Style="width: 100%;"/>
+        <FluentSlider Label="@Localizer["chunk_quality_selection"]" Orientation="Orientation.Horizontal"
+                      Min="10" Max="100" Step="10" @bind-Value="_chunkQuality" Style="margin-bottom: 1rem;">
+            <FluentSliderLabel Position="10">10%</FluentSliderLabel>
+            <FluentSliderLabel Position="50">50%</FluentSliderLabel>
+            <FluentSliderLabel Position="90">90%</FluentSliderLabel>
+            <FluentSliderLabel Position="100">100%</FluentSliderLabel>
+        </FluentSlider>
+        <FluentSlider Label="@Localizer["chunk_scale_selection"]" Orientation="Orientation.Horizontal"
+                      Min="10" Max="100" Step="10" @bind-Value="_chunkScale" Style="margin-bottom: 1rem;">
+            <FluentSliderLabel Position="10">10%</FluentSliderLabel>
+            <FluentSliderLabel Position="50">50%</FluentSliderLabel>
+            <FluentSliderLabel Position="90">90%</FluentSliderLabel>
+            <FluentSliderLabel Position="100">100%</FluentSliderLabel>
+        </FluentSlider>
+    </FluentGridItem>
+</FluentGrid>
+
+@if (_file is not null)
+{
+    <FluentLabel Typo="Typography.H4">File(s) infos:</FluentLabel>
+    <FluentLabel>@_file.Name (@($"{decimal.Divide(_file.Size, 1024):N} KB"))</FluentLabel>
+    <FluentLabel>@_file.ContentType</FluentLabel>
+}
+<div style="text-align: right;">
+    <FluentButton Appearance="Appearance.Accent" OnClick="@StartAsync" Loading="@_chunkProcessing">@Localizer["start_analysis"]</FluentButton>
+</div>

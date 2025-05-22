@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PdfExtract", "PdfExtract\PdfExtract.csproj", "{2A2413E8-F2F3-4E75-9606-5544372ABD4E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PdfExtract", "PdfExtract\PdfExtract.csproj", "{65F1DD79-7B53-4E11-9DDE-F8319F64D2AB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -8,9 +8,9 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2A2413E8-F2F3-4E75-9606-5544372ABD4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2A2413E8-F2F3-4E75-9606-5544372ABD4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2A2413E8-F2F3-4E75-9606-5544372ABD4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2A2413E8-F2F3-4E75-9606-5544372ABD4E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65F1DD79-7B53-4E11-9DDE-F8319F64D2AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65F1DD79-7B53-4E11-9DDE-F8319F64D2AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65F1DD79-7B53-4E11-9DDE-F8319F64D2AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65F1DD79-7B53-4E11-9DDE-F8319F64D2AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

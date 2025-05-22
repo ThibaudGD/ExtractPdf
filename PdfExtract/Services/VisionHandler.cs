@@ -11,6 +11,10 @@ public sealed partial class VisionHandler : IVisionHandler
     private readonly IChatClient _chatClient;
     private readonly ILogger<VisionHandler> _logger;
 
+    private long _totalTokenInput;
+    private long _totalTokenOutput;
+    private long _totalTokenTotal;
+    
     public VisionHandler(IChatClient chatClient, ILogger<VisionHandler> logger)
     {
         _chatClient = chatClient;
@@ -71,6 +75,9 @@ public sealed partial class VisionHandler : IVisionHandler
         });
 
         var matches = ExtractJson().Matches(response.Text);
+        _totalTokenInput += response.Usage?.InputTokenCount ?? 0;
+        _totalTokenOutput += response.Usage?.OutputTokenCount ?? 0;
+        _totalTokenTotal += response.Usage?.TotalTokenCount ?? 0;
         foreach (Match match in matches)
         {
             yield return match.Groups["json"].Value.Trim();
@@ -94,6 +101,10 @@ public sealed partial class VisionHandler : IVisionHandler
 
         var output = new List<Response>();
         var matches = ExtractJson().Matches(response.Text);
+        _totalTokenInput += response.Usage?.InputTokenCount ?? 0;
+        _totalTokenOutput += response.Usage?.OutputTokenCount ?? 0;
+        _totalTokenTotal += response.Usage?.TotalTokenCount ?? 0;
+
         foreach (Match match in matches)
         {
             var group = match.Groups["json"].Value.Trim();
@@ -113,7 +124,18 @@ public sealed partial class VisionHandler : IVisionHandler
 
         return output;
     }
-    
+
+    public (long totalInputTokens, long totalOutputTokens, long totalTokens) GetTokens()
+    {
+        return (_totalTokenInput, _totalTokenOutput, _totalTokenTotal);
+    }
+
+    public void ResetTokens()
+    {
+        _totalTokenInput = 0;
+        _totalTokenOutput = 0;
+        _totalTokenTotal = 0;
+    }
     
     [GeneratedRegex("```json(?<json>(.*?))```", RegexOptions.Compiled | RegexOptions.Singleline)]
     private static partial Regex ExtractJson();

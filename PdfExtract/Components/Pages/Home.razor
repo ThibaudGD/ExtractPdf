@@ -69,7 +69,8 @@
         <Steps>
             <FluentWizardStep Label="@Localizer["pdf"]" Summary="@Localizer["pdf_summary"]"/>
             <FluentWizardStep Label="@Localizer["chunk"]" Summary="@Localizer["chunk_summary"]"/>
-            <FluentWizardStep Label="@Localizer["vision"]" Summary="@Localizer["vision_summary", _currentChunk, _totalChunks]"/>
+            <FluentWizardStep Label="@Localizer["vision"]"
+                              Summary="@Localizer["vision_summary", _currentChunk, _totalChunks]"/>
             <FluentWizardStep Label="@Localizer["text"]" Summary="@Localizer["text_summary"]"/>
         </Steps>
         <ButtonTemplate>
@@ -79,6 +80,7 @@
 }
 @if (_results.Any())
 {
+    <FluentLabel Typo="Typography.H1">@Localizer["results"]</FluentLabel>
     <div style="height: 400px; overflow-y: scroll;">
         <FluentDataGrid Items="@_results" Virtualize="true" ItemSize="54" style="width: 100%;">
             <ChildContent>
@@ -103,5 +105,12 @@
             </EmptyContent>
         </FluentDataGrid>
     </div>
+}
+@if (_stats is not null)
+{
+    <FluentLabel Typo="Typography.H1">@Localizer["stats"]</FluentLabel>
+    <FluentLabel>Input tokens : @_stats.Value.totalInputTokens</FluentLabel>
+    <FluentLabel>Output tokens : @_stats.Value.totalOutputTokens</FluentLabel>
+    <FluentLabel>Total tokens : @_stats.Value.totalTokens</FluentLabel>
 }
     

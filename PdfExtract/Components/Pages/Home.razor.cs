@@ -20,6 +20,7 @@ public partial class Home : IDisposable
     private int _step;
     private int _totalChunks;
     private int _currentChunk;
+    private (long totalInputTokens, long totalOutputTokens, long totalTokens)? _stats;
     [Inject] public required IPdfToImage PdfToImage { get; set; }
     [Inject] public required IChunkHandler ChunkHandler { get; set; }
     [Inject] public required IVisionHandler VisionHandler { get; set; }
@@ -59,11 +60,11 @@ public partial class Home : IDisposable
 
             var fileInfo = new FileInfo(chunk.Value);
             if (!fileInfo.Exists) continue;
-            if (_currentChunk <= 3)
-            {
+            // if (_currentChunk <= 3)
+            // {
                 var responses = await VisionHandler.GetTextFromVisionAsync(fileInfo).ToListAsync();
                 outputs.AddRange(responses);
-            }
+            // }
 
             fileInfo.Delete();
         }
@@ -77,6 +78,9 @@ public partial class Home : IDisposable
 
         _step = 0;
         await InvokeAsync(StateHasChanged);
+        
+        _stats = VisionHandler.GetTokens();
+        VisionHandler.ResetTokens();
     }
 
 

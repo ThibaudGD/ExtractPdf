@@ -67,5 +67,14 @@ namespace PdfExtract.Resources.Pages {
                 return ResourceManager.GetString("quality_selection", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Analyse chunk {0} / {1}.
+        /// </summary>
+        internal static string vision_summary {
+            get {
+                return ResourceManager.GetString("vision_summary", resourceCulture);
+            }
+        }
     }
 }

@@ -21,4 +21,7 @@
     <data name="quality_selection" xml:space="preserve">
         <value>Qualité :</value>
     </data>
+    <data name="vision_summary" xml:space="preserve">
+        <value>Analyse chunk {0} / {1}</value>
+    </data>
 </root>

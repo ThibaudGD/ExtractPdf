@@ -52,12 +52,56 @@
     </FluentGridItem>
 </FluentGrid>
 
-@if (_file is not null)
-{
-    <FluentLabel Typo="Typography.H4">File(s) infos:</FluentLabel>
-    <FluentLabel>@_file.Name (@($"{decimal.Divide(_file.Size, 1024):N} KB"))</FluentLabel>
-    <FluentLabel>@_file.ContentType</FluentLabel>
-}
 <div style="text-align: right;">
-    <FluentButton Appearance="Appearance.Accent" OnClick="@StartAsync" Loading="@_chunkProcessing">@Localizer["start_analysis"]</FluentButton>
+    <FluentButton Appearance="Appearance.Accent" OnClick="@StartAsync"
+                  Loading="@_chunkProcessing">@Localizer["start_analysis"]</FluentButton>
 </div>
+
+@if (_step != 0)
+{
+    <FluentWizard @bind-Value="_step"
+                  StepperPosition="StepperPosition.Top"
+                  StepSequence="WizardStepSequence.Linear"
+                  DisplayStepNumber="@(WizardStepStatus.Current | WizardStepStatus.Next)"
+                  Border="WizardBorder.Outside"
+                  StepTitleHiddenWhen="@GridItemHidden.XsAndDown"
+                  Height="fit-content">
+        <Steps>
+            <FluentWizardStep Label="@Localizer["pdf"]" Summary="@Localizer["pdf_summary"]"/>
+            <FluentWizardStep Label="@Localizer["chunk"]" Summary="@Localizer["chunk_summary"]"/>
+            <FluentWizardStep Label="@Localizer["vision"]" Summary="@Localizer["vision_summary", _currentChunk, _totalChunks]"/>
+            <FluentWizardStep Label="@Localizer["text"]" Summary="@Localizer["text_summary"]"/>
+        </Steps>
+        <ButtonTemplate>
+            @* Aucun bouton n'est défini ici *@
+        </ButtonTemplate>
+    </FluentWizard>
+}
+@if (_results.Any())
+{
+    <div style="height: 400px; overflow-y: scroll;">
+        <FluentDataGrid Items="@_results" Virtualize="true" ItemSize="54" style="width: 100%;">
+            <ChildContent>
+                <TemplateColumn Title="@Localizer["response_text"]" Sortable="true">
+                    @context.Text
+                </TemplateColumn>
+                <TemplateColumn Title="@Localizer["response_color"]" Sortable="true">
+                    <div
+                        style="width: 20px; height: 20px; background-color: @context.Color; border: 1px solid black;"></div>
+                </TemplateColumn>
+                <TemplateColumn Title="@Localizer["response_category"]" Sortable="true">
+                    @context.Category
+                </TemplateColumn>
+                <TemplateColumn Title="@Localizer["response_note"]" Sortable="true">
+                    @context.Note
+                </TemplateColumn>
+            </ChildContent>
+            <EmptyContent>
+                <FluentIcon Value="@(new Icons.Filled.Size24.Crown())" Color="@Color.Accent"/>&nbsp; Nothing to see
+                here. Carry
+                on!
+            </EmptyContent>
+        </FluentDataGrid>
+    </div>
+}
+    

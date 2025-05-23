@@ -1,0 +1,116 @@
+﻿@page "/"
+
+<PageTitle>Home</PageTitle>
+<FluentGrid>
+    <FluentGridItem xs="9">
+        <FluentInputFile Id="my-file-uploader"
+                         Mode="InputFileMode.SaveToTemporaryFolder"
+                         Multiple="false"
+                         MaximumFileSize="@(10 * 1024 * 1024)"
+                         Accept="application/pdf"
+                         @bind-ProgressPercent="@_progressPercent"
+                         OnCompleted="@OnCompletedAsync"
+                         Style="height: 400px;">
+            <ChildContent>
+                <label for="my-file-uploader">
+                    <FluentIcon Value="@(new @Icons.Regular.Size24.ArrowUpload())"/>
+                </label>
+
+                <div>
+                    Drag files here you wish to upload,
+                    or <label for="my-file-uploader">browse</label>
+                    for them<span style="color: red;">*</span>.
+                    <br/>
+                </div>
+            </ChildContent>
+        </FluentInputFile>
+    </FluentGridItem>
+    <FluentGridItem xs="3">
+        <FluentSlider Label="@Localizer["quality_selection"]" Orientation="Orientation.Horizontal" Min="10"
+                      Max="100" Step="10" @bind-Value="_quality" Style="margin-bottom: 1rem;">
+            <FluentSliderLabel Position="10">10%</FluentSliderLabel>
+            <FluentSliderLabel Position="50">50%</FluentSliderLabel>
+            <FluentSliderLabel Position="90">90%</FluentSliderLabel>
+            <FluentSliderLabel Position="100">100%</FluentSliderLabel>
+        </FluentSlider>
+        <FluentNumberField Label="@Localizer["chunk_size"]" @bind-Value="_chunkSize" Style="width: 100%;"/>
+        <FluentNumberField Label="@Localizer["chunk_overlap"]" @bind-Value="_chunkOverlap" Style="width: 100%;"/>
+        <FluentSlider Label="@Localizer["chunk_quality_selection"]" Orientation="Orientation.Horizontal"
+                      Min="10" Max="100" Step="10" @bind-Value="_chunkQuality" Style="margin-bottom: 1rem;">
+            <FluentSliderLabel Position="10">10%</FluentSliderLabel>
+            <FluentSliderLabel Position="50">50%</FluentSliderLabel>
+            <FluentSliderLabel Position="90">90%</FluentSliderLabel>
+            <FluentSliderLabel Position="100">100%</FluentSliderLabel>
+        </FluentSlider>
+        <FluentSlider Label="@Localizer["chunk_scale_selection"]" Orientation="Orientation.Horizontal"
+                      Min="10" Max="100" Step="10" @bind-Value="_chunkScale" Style="margin-bottom: 1rem;">
+            <FluentSliderLabel Position="10">10%</FluentSliderLabel>
+            <FluentSliderLabel Position="50">50%</FluentSliderLabel>
+            <FluentSliderLabel Position="90">90%</FluentSliderLabel>
+            <FluentSliderLabel Position="100">100%</FluentSliderLabel>
+        </FluentSlider>
+    </FluentGridItem>
+</FluentGrid>
+
+<div style="text-align: right;">
+    <FluentButton Appearance="Appearance.Accent" OnClick="@StartAsync"
+                  Loading="@_chunkProcessing">@Localizer["start_analysis"]</FluentButton>
+</div>
+
+@if (_step != 0)
+{
+    <FluentWizard @bind-Value="_step"
+                  StepperPosition="StepperPosition.Top"
+                  StepSequence="WizardStepSequence.Linear"
+                  DisplayStepNumber="@(WizardStepStatus.Current | WizardStepStatus.Next)"
+                  Border="WizardBorder.Outside"
+                  StepTitleHiddenWhen="@GridItemHidden.XsAndDown"
+                  Height="fit-content">
+        <Steps>
+            <FluentWizardStep Label="@Localizer["pdf"]" Summary="@Localizer["pdf_summary"]"/>
+            <FluentWizardStep Label="@Localizer["chunk"]" Summary="@Localizer["chunk_summary"]"/>
+            <FluentWizardStep Label="@Localizer["vision"]"
+                              Summary="@Localizer["vision_summary", _currentChunk, _totalChunks]"/>
+            <FluentWizardStep Label="@Localizer["text"]" Summary="@Localizer["text_summary"]"/>
+        </Steps>
+        <ButtonTemplate>
+            @* Aucun bouton n'est défini ici *@
+        </ButtonTemplate>
+    </FluentWizard>
+}
+@if (_results.Any())
+{
+    <FluentLabel Typo="Typography.H1">@Localizer["results"]</FluentLabel>
+    <div style="height: 400px; overflow-y: scroll;">
+        <FluentDataGrid Items="@_results" Virtualize="true" ItemSize="54" style="width: 100%;">
+            <ChildContent>
+                <TemplateColumn Title="@Localizer["response_text"]" Sortable="true">
+                    @context.Text
+                </TemplateColumn>
+                <TemplateColumn Title="@Localizer["response_color"]" Sortable="true">
+                    <div
+                        style="width: 20px; height: 20px; background-color: @context.Color; border: 1px solid black;"></div>
+                </TemplateColumn>
+                <TemplateColumn Title="@Localizer["response_category"]" Sortable="true">
+                    @context.Category
+                </TemplateColumn>
+                <TemplateColumn Title="@Localizer["response_note"]" Sortable="true">
+                    @context.Note
+                </TemplateColumn>
+            </ChildContent>
+            <EmptyContent>
+                <FluentIcon Value="@(new Icons.Filled.Size24.Crown())" Color="@Color.Accent"/>&nbsp; Nothing to see
+                here. Carry
+                on!
+            </EmptyContent>
+        </FluentDataGrid>
+    </div>
+}
+@if (_stats is not null)
+{
+    <FluentLabel Typo="Typography.H1">@Localizer["stats"]</FluentLabel>
+    <FluentLabel>Input tokens : @_stats.Value.totalInputTokens</FluentLabel>
+    <FluentLabel>Output tokens : @_stats.Value.totalOutputTokens</FluentLabel>
+    <FluentLabel>Total tokens : @_stats.Value.totalTokens</FluentLabel>
+}
+    

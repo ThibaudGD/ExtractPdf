@@ -60,11 +60,11 @@ public partial class Home : IDisposable
 
             var fileInfo = new FileInfo(chunk.Value);
             if (!fileInfo.Exists) continue;
-            // if (_currentChunk <= 3)
-            // {
+            if (_currentChunk <= 3)
+            {
                 var responses = await VisionHandler.GetTextFromVisionAsync(fileInfo).ToListAsync();
                 outputs.AddRange(responses);
-            // }
+            }
 
             fileInfo.Delete();
         }
